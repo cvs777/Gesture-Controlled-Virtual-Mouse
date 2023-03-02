@@ -158,6 +158,8 @@ class HandRecog:
             
             dist = self.get_signed_dist(point[:2])
             dist2 = self.get_signed_dist(point[1:])
+            dist1 = self.get_signed_dist(point[0:])
+
             
             try:
                 ratio = round(dist/dist2,1)
@@ -288,15 +290,16 @@ class Controller:
         return dist
     
     def changesystembrightness():
-        """sets system brightness based on 'Controller.pinchlv'."""
-        currentBrightnessLv = sbcontrol.get_brightness(display=0)/100.0
-        currentBrightnessLv += Controller.pinchlv/50.0
+        currentBrightnessLv = sbcontrol.get_brightness(display=0)[0]/100.0
+         currentBrightnessLv += Controller.pinchlv/50.0
         if currentBrightnessLv > 1.0:
             currentBrightnessLv = 1.0
         elif currentBrightnessLv < 0.0:
             currentBrightnessLv = 0.0       
-        sbcontrol.fade_brightness(int(100*currentBrightnessLv) , start = sbcontrol.get_brightness(display=0))
-    
+        sbcontrol.set_brightness(int(100*currentBrightnessLv) , display=0)
+        #monitors = sbcontrol.list_monitors()
+        #print(monitors)
+   
     def changesystemvolume():
         """sets system volume based on 'Controller.pinchlv'."""
         devices = AudioUtilities.GetSpeakers()
@@ -538,7 +541,7 @@ class GestureController:
         except:
             pass
         
-        if GestureController.dom_hand == True:
+        if handedness_dict['classification'][0]['label'] == 'Right':
             GestureController.hr_major = right
             GestureController.hr_minor = left
         else :
